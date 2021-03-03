@@ -1,4 +1,3 @@
-
 LOCAL_PATH := device/xiaomi/laurel_sprout
 
 # define hardware platform
