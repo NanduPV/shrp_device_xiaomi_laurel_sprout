@@ -20,6 +20,6 @@
 # In particular, you can add lunch options with the add_lunch_combo
 # function: add_lunch_combo generic-eng
 
-for var in eng user userdebug; do
-  add_lunch_combo omni_laurel_sprout-$var
+for var in eng; do
+  add_lunch_combo shrp_laurel_sprout-$var
 done

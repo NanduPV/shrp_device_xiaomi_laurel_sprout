@@ -16,29 +16,57 @@
 
 DEVICE_PATH := device/xiaomi/laurel_sprout
 
+#Ignore Missing Dependencies
+ALLOW_MISSING_DEPENDENCIES=true
+
+#Set locale to C
+LC_ALL="C"
+
 # SHRP
-SHRP_PATH := device/xiaomi/laurel_sprout
+SHRP_DEVICE_CODE :=laurel_sprout
+SHRP_PATH := device/xiaomi/$(SHRP_DEVICE_CODE)
 SHRP_MAINTAINER := NanduPV
-SHRP_DEVICE_CODE := laurel_sprout
-SHRP_EDL_MODE := 1
-SHRP_EXTERNAL := /sdcard1
-SHRP_INTERNAL := /sdcard
-SHRP_OTG := /usb-otg
-SHRP_FLASH := 0
-SHRP_AB := true
 SHRP_REC_TYPE := Treble
 SHRP_DEVICE_TYPE := A/B
+SHRP_REC := /dev/block/bootdevice/by-name/recovery
+
+# SHRP flags
+SHRP_EDL_MODE := 1
+SHRP_INTERNAL := /sdcard
+SHRP_EXTERNAL := /sdcard1
+SHRP_OTG := /usb-otg
+SHRP_FLASH := 1
+SHRP_AB := true
 SHRP_STATUSBAR_RIGHT_PADDING := 40
 SHRP_STATUSBAR_LEFT_PADDING := 40
-SHRP_DARK := true
+SHRP_NOTCH := true
 SHRP_EXPRESS := true
+SHRP_DARK := true
+
+# Addons
+INC_IN_REC_ADDON_1 := true
+INC_IN_REC_ADDON_2 := true
+INC_IN_REC_ADDON_3 := true
+INC_IN_REC_ADDON_4 := true
+
+# Bootloader
+TARGET_BOOTLOADER_BOARD_NAME := trinket
+TARGET_NO_BOOTLOADER := true
+TARGET_USES_UEFI := true
+
+# Platform
+TARGET_BOARD_PLATFORM := trinket
+TARGET_BOARD_PLATFORM_GPU := qcom-adreno610
+
+# Bootctrl
+TARGET_USES_HARDWARE_QCOM_BOOTCTRL := true
+USE_COMMON_BOOTCTRL := true
 
 # Architecture
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
-TARGET_CPU_ABI2 :=
-TARGET_CPU_VARIANT := kryo300
+TARGET_CPU_VARIANT := cortex-a73
 
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-a
@@ -48,13 +76,23 @@ TARGET_2ND_CPU_VARIANT := cortex-a73
 
 TARGET_USES_64_BIT_BINDER := true
 
-# Bootctrl
-TARGET_USES_HARDWARE_QCOM_BOOTCTRL := true
-
-# Bootloader
-TARGET_BOOTLOADER_BOARD_NAME := trinket
-TARGET_NO_BOOTLOADER := true
-TARGET_USES_UEFI := true
+# Kernel
+BOARD_BOOT_HEADER_VERSION := 2
+BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200n8 androidboot.console=ttyMSM0 earlycon=msm_serial_dm,0x4a90000 androidboot.hardware=qcom msm_rtb.filter=0x237 lpm_levels.sleep_disabled=1 service_locator.enable=1 swiotlb=1 androidboot.configfs=true androidboot.usbcontroller=4e00000.dwc3
+BOARD_KERNEL_CMDLINE += loop.max_part=7
+BOARD_KERNEL_BASE := 0x00000000
+BOARD_KERNEL_PAGESIZE := 4096
+BOARD_KERNEL_TAGS_OFFSET := 0x00000100
+BOARD_RAMDISK_OFFSET     := 0x01000000
+BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
+BOARD_KERNEL_SEPARATED_DTBO := true
+BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
+#TARGET_KERNEL_ARCH := arm64
+#TARGET_KERNEL_HEADER_ARCH := arm64
+#TARGET_KERNEL_SOURCE := kernel/xiaomi/laurel_sprout
+#TARGET_KERNEL_CONFIG := vendor/laurel_sprout_defconfig
+#TARGET_KERNEL_CLANG_COMPILE := true
+TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/Image.gz-dtb
 
 # Enable CPUSets
 ENABLE_CPUSETS := true
@@ -62,23 +100,6 @@ ENABLE_SCHEDBOOST := true
 
 # GPT Utils
 BOARD_PROVIDES_GPTUTILS := true
-
-# Platform
-TARGET_BOARD_PLATFORM := trinket
-TARGET_BOARD_PLATFORM_GPU := qcom-adreno610
-
-# Kernel
-BOARD_KERNEL_BASE := 0x00000000
-BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200n8 androidboot.hardware=qcom androidboot.console=ttyMSM0 androidboot.memcg=1 lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=1 firmware_class.path=/vendor/firmware_mnt/image earlycon=msm_geni_serial,0x4a90000 loop.max_part=7 cgroup.memory=nokmem,nosocket
-BOARD_KERNEL_CMDLINE += skip_override androidboot.fastboot=1
-BOARD_KERNEL_PAGESIZE := 4096
-BOARD_KERNEL_TAGS_OFFSET := 0x00000100
-BOARD_RAMDISK_OFFSET := 0x01000000
-TARGET_PREBUILT_KERNEL := device/xiaomi/laurel_sprout/prebuilt/Image.gz-dtb
-BOARD_PREBUILT_DTBOIMAGE := device/xiaomi/laurel_sprout/prebuilt/dtbo.img
-BOARD_KERNEL_SEPARATED_DTBO := true
-BOARD_INCLUDE_RECOVERY_DTBO := true
-BOARD_BOOTIMG_HEADER_VERSION := 1
 
 # Partitions
 BOARD_FLASH_BLOCK_SIZE := 131072
@@ -104,18 +125,18 @@ TARGET_USERIMAGES_USE_F2FS := true
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 TARGET_COPY_OUT_VENDOR := vendor
 
-# Recovery
-TARGET_RECOVERY_WIPE := $(DEVICE_PATH)/recovery/root/etc/recovery.wipe
-BOARD_HAS_LARGE_FILESYSTEM := true
-TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
-BOARD_USES_METADATA_PARTITION := true
-
 # Use mke2fs to create ext4 images
 TARGET_USES_MKE2FS := true
 
 # Android Verified Boot
 BOARD_AVB_ENABLE := false
 BOARD_BUILD_DISABLED_VBMETAIMAGE := true
+
+# Recovery
+TARGET_RECOVERY_WIPE := $(DEVICE_PATH)/recovery/root/etc/recovery.wipe
+BOARD_HAS_LARGE_FILESYSTEM := true
+TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
+BOARD_USES_METADATA_PARTITION := true
 
 # Crypto
 TW_INCLUDE_CRYPTO := true
@@ -141,11 +162,17 @@ BOARD_SUPPRESS_SECURE_ERASE := true
 TWRP_INCLUDE_LOGCAT := true
 TARGET_USES_LOGD := true
 TW_HAS_EDL_MODE := true
-USE_RECOVERY_INSTALLER := true
-RECOVERY_INSTALLER_PATH := device/xiaomi/laurel_sprout/installer
 TW_INCLUDE_REPACKTOOLS := true
 TW_USE_TOOLBOX := true
 
 # Encryption
 PLATFORM_SECURITY_PATCH := 2025-12-31
 PLATFORM_VERSION := 16.1.0
+
+# exFAT FS Support
+TW_INCLUDE_FUSE_EXFAT := true
+# NTFS Support
+TW_INCLUDE_FUSE_NTFS := true
+
+#Use LZMA Compression
+LZMA_RAMDISK_TARGETS := recovery

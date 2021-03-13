@@ -1,0 +1,12 @@
+[
+  { 
+    "repository": "NanduPV/lineage_kernel_xiaomi_laurel_sprout",
+    "target_path": "kernel/xiaomi/laurel_sprout"
+    "branch": "lineage-17.1"
+  },
+    { 
+    "repository": "TeamWin/android_hardware_qcom_bootctrl",
+    "target_path": "hardware/qcom/bootctrl"
+    "branch": "android-9.0"
+  }
+]
